@@ -1,5 +1,4 @@
 from django.db import models
-from django.db import models
 from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
@@ -37,8 +36,8 @@ class ProcessedSocialMediaMessage(models.Model):
         return str(self.postid)
 
 class IncorrectClassification(models.Model):
-    user = models.OneToOneField(User)
-    post = models.OneToOneField(ProcessedSocialMediaMessage)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    post = models.OneToOneField(ProcessedSocialMediaMessage, on_delete=models.CASCADE)
     comment = models.TextField(blank=True)
 
     def __unicode__(self):

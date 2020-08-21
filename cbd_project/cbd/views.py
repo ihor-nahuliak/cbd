@@ -1,25 +1,21 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.db.models import Count
 
 import json
-import datetime
 
 from django.db.models import Max
 from django.db.models import Min
 
-import datetime, qsstats
+import datetime
 
 from cbd.models import ProcessedSocialMediaMessage, MLCache, IncorrectClassification
 
-from django.core import serializers
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 
@@ -44,7 +40,7 @@ def index(request):
                 return HttpResponse("Your account is disabled.")
         else:
             # Bad login details were provided. So we can't log the user in.
-            print "Invalid login details: {0}, {1}".format(username, password)
+            print("Invalid login details: {0}, {1}".format(username, password))
             return HttpResponse("Invalid login details supplied.")
 
     # The request is not a HTTP POST, so display the login form.
@@ -52,7 +48,7 @@ def index(request):
     else:
         # No context variables to pass to the template system, hence the
         # blank dictionary object...
-        return render_to_response('cbd/index.html', {}, context)
+        return render(request, template_name='cbd/index.html', context={})
 
 @login_required
 def user_logout(request):
