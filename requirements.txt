@@ -22,3 +22,4 @@ smart-open==2.1.0
 sqlparse==0.3.1
 twython==3.8.2
 urllib3==1.25.10
+django-qsstats-magic==1.1.0

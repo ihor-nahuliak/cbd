@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 import json
+import qsstats
 
 from django.db.models import Max
 from django.db.models import Min
@@ -144,7 +145,7 @@ def dashboard(request):
         months_dict = months_dict + monthobj_dict
     months_dict= months_dict + "]"
     # timeseries for last 7 days
-    today = maxdate['date__max'] # datetime.date.today()
+    today = maxdate['date__max'] or datetime.date.today()
     seven_days_ago = today - datetime.timedelta(days=7)
 
     time_series = qss.time_series(seven_days_ago, today)
@@ -162,10 +163,10 @@ def dashboard(request):
 
     # load affective word counts
     mlcache = MLCache.objects.all()[:1]
-    topic_model_json = ''
-    topic_model_cyberbullying_json = ''
-    affective_counts_json = ''
-    affective_counts_cyberbullying_json = ''
+    topic_model_json = '{}'
+    topic_model_cyberbullying_json = '{}'
+    affective_counts_json = '{}'
+    affective_counts_cyberbullying_json = '{}'
 
     for x in mlcache:
         affective_counts_json = x.affective_counts_json
@@ -176,16 +177,17 @@ def dashboard(request):
     affective_dict = json.loads(affective_counts_json)
 
     affective_count_list = [] #must be in order
-    affective_count_list.append(affective_dict['sadness'])
-    affective_count_list.append(affective_dict['anticipation'])
-    affective_count_list.append(affective_dict['disgust'])
-    affective_count_list.append(affective_dict['positive'])
-    affective_count_list.append(affective_dict['anger'])
-    affective_count_list.append(affective_dict['joy'])
-    affective_count_list.append(affective_dict['fear'])
-    affective_count_list.append(affective_dict['trust'])
-    affective_count_list.append(affective_dict['negative'])
-    affective_count_list.append(affective_dict['surprise'])
+    if affective_dict:
+        affective_count_list.append(affective_dict['sadness'])
+        affective_count_list.append(affective_dict['anticipation'])
+        affective_count_list.append(affective_dict['disgust'])
+        affective_count_list.append(affective_dict['positive'])
+        affective_count_list.append(affective_dict['anger'])
+        affective_count_list.append(affective_dict['joy'])
+        affective_count_list.append(affective_dict['fear'])
+        affective_count_list.append(affective_dict['trust'])
+        affective_count_list.append(affective_dict['negative'])
+        affective_count_list.append(affective_dict['surprise'])
 
     affective_count_list_str = ','.join(map(str, affective_count_list))
 
@@ -207,16 +209,17 @@ def dashboard(request):
     affective_cyber_dict = json.loads(affective_counts_cyberbullying_json)
 
     affective_count_list = [] #must be in order
-    affective_count_list.append(affective_cyber_dict['sadness'])
-    affective_count_list.append(affective_cyber_dict['anticipation'])
-    affective_count_list.append(affective_cyber_dict['disgust'])
-    affective_count_list.append(affective_cyber_dict['positive'])
-    affective_count_list.append(affective_cyber_dict['anger'])
-    affective_count_list.append(affective_cyber_dict['joy'])
-    affective_count_list.append(affective_cyber_dict['fear'])
-    affective_count_list.append(affective_cyber_dict['trust'])
-    affective_count_list.append(affective_cyber_dict['negative'])
-    affective_count_list.append(affective_cyber_dict['surprise'])
+    if affective_cyber_dict:
+        affective_count_list.append(affective_cyber_dict['sadness'])
+        affective_count_list.append(affective_cyber_dict['anticipation'])
+        affective_count_list.append(affective_cyber_dict['disgust'])
+        affective_count_list.append(affective_cyber_dict['positive'])
+        affective_count_list.append(affective_cyber_dict['anger'])
+        affective_count_list.append(affective_cyber_dict['joy'])
+        affective_count_list.append(affective_cyber_dict['fear'])
+        affective_count_list.append(affective_cyber_dict['trust'])
+        affective_count_list.append(affective_cyber_dict['negative'])
+        affective_count_list.append(affective_cyber_dict['surprise'])
 
     affective_cyber_count_list_str = ','.join(map(str, affective_count_list))
 
@@ -237,4 +240,4 @@ def dashboard(request):
 
     context_dict = {'tm_str': tm_str, 'tm_cyber_str':tm_cyber_str, 'affective_count_list_str': affective_count_list_str, 'affective_cyber_count_list_str': affective_cyber_count_list_str, 'nosocialmediausers': nosocialmediausers, 'nosocialmediamessages': nosocialmediamessages, 'nobullytraces': nobullytraces, 'missclassifiedcount': missclassifiedcount, 'rolejson': bullyrolecount_dict, 'recentincidents': recentincidents, 'weekts_dict': weekts_dict, 'months_dict': months_dict}
 
-    return render_to_response('cbd/dashboard.html', context_dict, context)
+    return render(request, template_name='cbd/dashboard.html', context=context_dict)

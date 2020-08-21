@@ -1,0 +1,21 @@
+# Temporary files
+~*
+.*
+!.gitignore
+!.dockerignore
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Translations
+*.mo
+*.pot
+
+# Environment
+env/
+venv/
